@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>未来网络 | Future of Internet Freedom</title>
+    <title>未来网络 | Digital Freedom Archive</title>
     <style>
         :root {
             --bg: #0a0b10;
@@ -12,18 +12,17 @@
             --neon-purple: #9d50bb;
             --text-main: #e6edf3;
             --text-dim: #8b949e;
-            --accent: #f0ad4e;
         }
 
         body {
             background-color: var(--bg);
             color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
             line-height: 1.6;
         }
 
-        /* 动态背景 */
+        /* 动态渐变背景 */
         body::before {
             content: "";
             position: fixed;
@@ -32,14 +31,11 @@
             z-index: -1;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
+        /* Header */
         header {
-            height: 70vh;
+            height: 60vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -48,7 +44,7 @@
         }
 
         .glitch-title {
-            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-size: clamp(2rem, 8vw, 4rem);
             font-weight: 800;
             background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
             -webkit-background-clip: text;
@@ -56,12 +52,12 @@
             margin-bottom: 20px;
         }
 
-        /* 核心内容网格 */
+        /* 主页保留内容网格 */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
-            margin-bottom: 50px;
+            padding-bottom: 80px;
         }
 
         .card {
@@ -69,37 +65,20 @@
             border: 1px solid #30363d;
             border-radius: 12px;
             padding: 30px;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            transition: 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.15);
-        }
-
-        /* 跳转按钮设计 */
-        .cta-container {
-            text-align: center;
-            margin: 60px 0;
-        }
-
+        /* 科技感按钮 */
         .btn-tech {
-            position: relative;
-            display: inline-block;
-            padding: 15px 40px;
+            padding: 12px 30px;
             color: var(--neon-blue);
-            text-decoration: none;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
             border: 1px solid var(--neon-blue);
-            overflow: hidden;
-            transition: 0.5s;
-            cursor: pointer;
             background: transparent;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
         }
 
         .btn-tech:hover {
@@ -108,132 +87,143 @@
             box-shadow: 0 0 20px var(--neon-blue);
         }
 
-        /* 说明面板 (隐藏状态) */
+        /* --- 弹窗逻辑 --- */
         #info-panel {
-            display: none;
+            display: none; /* 初始隐藏 */
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 11, 16, 0.98);
-            z-index: 100;
-            overflow-y: auto;
-            padding: 50px 0;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
 
-        .panel-content {
+        .panel-container {
+            width: 90%;
             max-width: 800px;
-            margin: 0 auto;
+            max-height: 80vh; /* 限制高度，支持滚动 */
             background: var(--card-bg);
-            padding: 40px;
-            border: 1px solid var(--neon-purple);
+            border: 1px solid var(--neon-blue);
             border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: slideUp 0.4s ease-out;
         }
+
+        /* 弹窗头部固定 */
+        .panel-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 弹窗核心内容：支持滚动 */
+        .panel-body {
+            padding: 30px;
+            overflow-y: auto; /* 允许纵向滚动 */
+            flex-grow: 1;
+        }
+
+        /* 自定义滚动条样式 */
+        .panel-body::-webkit-scrollbar { width: 6px; }
+        .panel-body::-webkit-scrollbar-track { background: #0d1117; }
+        .panel-body::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
 
         .close-btn {
-            float: right;
-            color: var(--text-dim);
-            cursor: pointer;
-            font-size: 1.5rem;
+            background: none; border: none; color: var(--text-dim);
+            font-size: 1.2rem; cursor: pointer;
+        }
+        .close-btn:hover { color: white; }
+
+        .link-item { margin-bottom: 25px; }
+        .link-item a { color: var(--neon-blue); text-decoration: none; font-weight: bold; }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .link-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .link-list li {
-            margin: 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #30363d;
-        }
-
-        .link-list a {
-            color: var(--neon-blue);
-            text-decoration: none;
-        }
-
-        .link-list a:hover { text-decoration: underline; }
-
-        .en-sub { display: block; font-size: 0.8rem; color: var(--text-dim); }
-
-        @keyframes pulse { 50% { opacity: 0.5; } }
-        .live-dot { height: 8px; width: 8px; background: #238636; border-radius: 50%; display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
-
+        .en-sub { display: block; font-size: 0.8rem; color: var(--text-dim); margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-size: 0.8rem; border: 1px solid var(--neon-blue); padding: 5px 15px; border-radius: 20px; margin-bottom: 20px;">
-        <span class="live-dot"></span> SECURE ACCESS GRANTED
-    </div>
     <div class="glitch-title">NETWORK FREEDOM</div>
-    <p style="color: var(--text-dim); max-width: 600px; text-align: center;">
-        超越地理限制，重构数字身份，守护每一次自由的字节跳动。<br>
-        Transcending boundaries, reclaiming identity, and protecting every free byte of data.
-    </p>
-    
-    <div class="cta-container">
-        <button class="btn-tech" onclick="togglePanel()">
-            查看说明及链接<br>
-            <span style="font-size: 0.7rem;">ACCESS DOCS & LINKS</span>
-        </button>
-    </div>
+    <p style="color: var(--text-dim);">捍卫数字世界的开放与真实 | Defending Openness & Truth</p>
+    <button class="btn-tech" onclick="openPanel()">进入资源说明库</button>
 </header>
 
 <div class="container">
     <div class="grid">
+        <!-- 保留的原有内容 -->
         <div class="card">
-            <h3 style="color: var(--neon-blue);">去中心化网络 <span class="en-sub">Decentralized Web</span></h3>
-            <p>基于分布式协议，确保信息存储不再依赖单一服务器。</p>
-            <p style="font-size: 0.9rem; color: var(--text-dim);">Ensuring data storage no longer relies on a single server via distributed protocols.</p>
+            <h3 style="color: var(--neon-blue);">数据主权 <span class="en-sub">Data Sovereignty</span></h3>
+            <p>你的数据应由你掌控，而非中心化巨头。</p>
         </div>
         <div class="card">
-            <h3 style="color: var(--neon-blue);">隐私增强技术 <span class="en-sub">PETs</span></h3>
-            <p>利用零知识证明等技术，在不泄露隐私的前提下完成验证。</p>
-            <p style="font-size: 0.9rem; color: var(--text-dim);">Using technologies like Zero-Knowledge Proofs to verify without compromising privacy.</p>
+            <h3 style="color: var(--neon-blue);">抗审查协议 <span class="en-sub">Anti-Censorship</span></h3>
+            <p>分布式网络让信息一旦发布便不可被轻易抹除。</p>
+        </div>
+        <div class="card">
+            <h3 style="color: var(--neon-blue);">端到端加密 <span class="en-sub">End-to-End Encryption</span></h3>
+            <p>对话隐私是数字时代的基本权利。</p>
         </div>
     </div>
 </div>
 
-<!-- 弹出的说明及链接页面 -->
-<div id="info-panel">
-    <div class="panel-content">
-        <span class="close-btn" onclick="togglePanel()">[ CLOSE ]</span>
-        <h2 style="color: var(--neon-purple);">说明及资源库 <span class="en-sub">Documentation & Resources</span></h2>
-        <hr style="border: 0; border-top: 1px solid #30363d; margin: 20px 0;">
-        
-        <div class="bilingual-section">
-            <p><strong>项目说明：</strong> 本页面旨在传播网络自由技术（Internet Freedom Tech）的核心理念。我们相信开源与透明是数字世界的基石。</p>
-            <p style="color: var(--text-dim); font-size: 0.9rem;"><strong>Project Note:</strong> This page promotes core concepts of Internet Freedom Tech. We believe open-source and transparency are the foundations of the digital world.</p>
+<!-- 弹窗部分 -->
+<div id="info-panel" onclick="closePanel(event)">
+    <div class="panel-container" onclick="event.stopPropagation()">
+        <div class="panel-header">
+            <h2 style="margin:0; font-size: 1.2rem;">说明及外部链接</h2>
+            <button class="close-btn" onclick="closePanel()">[ CLOSE ]</button>
         </div>
+        
+        <div class="panel-body">
+            <!-- 这里可以无限添加内容，会自动滚动 -->
+            <div class="link-item">
+                <p><strong>项目使命：</strong> 这是一个开源的数字权利展示项目，旨在向大众普及网络自由的重要性。</p>
+                <span class="en-sub">Mission: An open-source project to educate people on the importance of digital freedom.</span>
+            </div>
 
-        <ul class="link-list">
-            <li>
-                <a href="https://eff.org" target="_blank">电子前哨基金会 (EFF)</a>
-                <span class="en-sub">Defending Civil Liberties in the Digital World.</span>
-            </li>
-            <li>
-                <a href="https://torproject.org" target="_blank">Tor Project</a>
-                <span class="en-sub">Anonymity Online: Protect your privacy. Defeat censorship.</span>
-            </li>
-            <li>
-                <a href="https://ipfs.tech" target="_blank">IPFS 协议</a>
-                <span class="en-sub">A peer-to-peer hypermedia protocol.</span>
-            </li>
-        </ul>
+            <div class="link-item">
+                <a href="#">📘 核心说明文档 (Documentation)</a>
+                <p style="font-size: 0.9rem;">详细介绍了去中心化网络的技术原理与实现路径。</p>
+            </div>
+
+            <div class="link-item">
+                <a href="https://eff.org" target="_blank">🔗 电子前哨基金会 (EFF)</a>
+                <span class="en-sub">The leading nonprofit defending digital privacy and free expression.</span>
+            </div>
+
+            <div class="link-item">
+                <a href="https://ipfs.tech" target="_blank">🔗 IPFS 官方网站</a>
+                <span class="en-sub">A peer-to-peer hypermedia protocol to make the web faster, safer, and more open.</span>
+            </div>
+
+            <!-- 你可以在这里继续复制 link-item 块，内容再多也能滚动 -->
+            <div class="link-item" style="border-top: 1px solid #30363d; padding-top: 20px;">
+                <p style="color: var(--text-dim); font-size: 0.8rem;">更多资源将持续更新... <br>More resources to be updated.</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    function togglePanel() {
-        const panel = document.getElementById('info-panel');
-        if (panel.style.display === 'block') {
-            panel.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        } else {
-            panel.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
+    function openPanel() {
+        document.getElementById('info-panel').style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // 防止主页面跟随滚动
+    }
+
+    function closePanel() {
+        document.getElementById('info-panel').style.display = 'none';
+        document.body.style.overflow = 'auto'; // 恢复主页面滚动
     }
 </script>
 
